@@ -1,0 +1,19 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtualenv
+venv/
+venv
+# Ignore environment files
+.env
+*.env
+
+# Ignore Django migrations (optional)
+*/migrations/*.py
+*/migrations/*.pyc
+
+# Ignore static & media files (if not tracking)
+staticfiles/
+media/
