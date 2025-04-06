@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,9 +7,11 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .utils.drive_upload import upload_file_to_drive
 from .models import *
 from .serializers import  *
+from rest_framework.permissions import AllowAny
+from user_management.authenticate import CustomAuthentication
 
 class OrderListView(APIView):
-
+    authentication_classes = [CustomAuthentication]
     def get(self , request):
         orders_listing = Order.objects.all()
         orders_serializer = OrderSerializer(orders_listing , many=True)
@@ -59,11 +61,27 @@ class OrderListView(APIView):
 
 
 class OrderDetailView(APIView):
-    pass
+     
+    def get(request , pk):
+        #get_object_or_404
+        return
+    
+    def put():
+        return
+    
+    
+    def patch():
+        return 
+    
+    def delete():
+        return
+    
+    
 
 
 class OrderItemListView(APIView):
     parser_classes = (MultiPartParser, FormParser)  # Allow file uploads
+    authentication_classes = [CustomAuthentication]
 
     def get(self , request):
         order_items = OrderItem.objects.all()
