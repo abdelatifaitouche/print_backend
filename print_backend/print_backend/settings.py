@@ -127,7 +127,7 @@ DATABASES = {
         'NAME': 'printdb',
         'USER': 'printdb_user',
         'PASSWORD': 'EjjW53EVZYwspVQZjF0092uKT4m9FbUb',
-        'HOST': 'postgresql://printdb_user:EjjW53EVZYwspVQZjF0092uKT4m9FbUb@dpg-d04091adbo4c73c98mcg-a.oregon-postgres.render.com/printdb',
+        'HOST': 'dpg-d04091adbo4c73c98mcg-a',
         'PORT': '5432',
     }
 }
