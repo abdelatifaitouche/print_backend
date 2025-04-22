@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-
 from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +25,7 @@ SECRET_KEY = 'django-insecure-oc2w_f7mffwlaqpn5@8u7$ln_^r7nh1x2535dp4sv9ad9wyw_s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -110,11 +109,26 @@ WSGI_APPLICATION = 'print_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+"""
+
+
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'printdb',
+        'USER': 'printdb_user',
+        'PASSWORD': 'EjjW53EVZYwspVQZjF0092uKT4m9FbUb',
+        'HOST': 'postgresql://printdb_user:EjjW53EVZYwspVQZjF0092uKT4m9FbUb@dpg-d04091adbo4c73c98mcg-a.oregon-postgres.render.com/printdb',
+        'PORT': '5432',
     }
 }
 
