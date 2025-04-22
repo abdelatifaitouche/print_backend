@@ -55,7 +55,7 @@ class OrderItem(models.Model):
     item_name = models.CharField(null=True , blank=True , max_length=255)
     status = models.CharField(max_length=20, choices=STATUS_ENUM, default="pending")
     #created_at = models.DateTimeField(auto_now_add=True)
-    file = models.FileField(upload_to='uploads/' , null=True , blank = True)
-
+    google_drive_file_id = models.CharField(max_length=255, null=True, blank=True)
+    
     def __str__(self):
         return f"Item: {self.item_name} (x{self.order.id})"

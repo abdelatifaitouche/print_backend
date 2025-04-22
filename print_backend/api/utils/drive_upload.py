@@ -3,16 +3,22 @@ from google.oauth2 import service_account
 from googleapiclient.http import MediaIoBaseUpload
 import mimetypes
 import io
+import os
+import json
+from dotenv import load_dotenv
 
 def upload_file_to_drive(file):
     # Path to your service account JSON file
     SERVICE_ACCOUNT_FILE = "credentials.json"  # Make sure to use the correct path
+    load_dotenv()
 
+    credentials_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+    credentials_info = json.loads(credentials_json)
     # Define the scope
     SCOPES = ["https://www.googleapis.com/auth/drive.file"]  # Use drive.file for file uploads
 
     # Authenticate using the service account
-    creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    creds = service_account.Credentials.from_service_account_info(credentials_info, scopes=SCOPES)
     drive_service = build("drive", "v3", credentials=creds)
 
     # Get the file's name and MIME type

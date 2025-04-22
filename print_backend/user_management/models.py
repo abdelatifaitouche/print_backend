@@ -12,7 +12,7 @@ class Company(models.Model):
     date_joined = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return super().__str__()
+        return self.company_name
 
 
 
@@ -26,6 +26,7 @@ class CustomUser(AbstractUser):
     username = models.CharField(max_length=150)
     phone_number = models.IntegerField(null=True , blank=True)
     role = models.CharField(max_length=20 , choices=ROLES , null=True , blank=True)
+    company = models.ForeignKey(Company , on_delete=models.CASCADE , null=True , blank=True)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username" , 'first_name' , 'last_name']
 

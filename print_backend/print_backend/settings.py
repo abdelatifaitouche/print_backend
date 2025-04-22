@@ -164,7 +164,6 @@ AUTH_USER_MODEL = "user_management.CustomUser"
 
 
 
-CORS_ALLOW_ALL_ORIGINS = True
 
 # Or restrict to a specific frontend domain (recommended for production)
 
@@ -172,7 +171,16 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True  # Allow cookies & authentication
 
 # Allow all headers
-CORS_ALLOW_HEADERS = [
-    'authorization',
-    'content-type',
-]
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)
+
+
+
+CORS_ALLOW_ALL_ORIGINS = True  # or use CORS_ALLOWED_ORIGINS
+CORS_EXPOSE_HEADERS = ["Content-Disposition"]
