@@ -8,6 +8,13 @@ urlpatterns = [
     path('orders/download/<str:file_id>/', DownloadFileView.as_view(), name='download_file'),
     path('orders/ordersStats/' , OrdersStatisticsView.as_view() , name="as view"),
     
-    path('orders/orderItem/orderItemDetails/<str:pk>' , OrderItemDetailView.as_view() , name="order Item details")
+    path('orders/orderItem/orderItemDetails/<str:pk>' , OrderItemDetailView.as_view() , name="order Item details"),
+    
+    
+    path('companies/companiesList/' , CompaniesListView.as_view() , name="Company listing"),
+    
+    
+    path('users/usersList/' , UsersListView.as_view() , name="users")
+
 
 ]

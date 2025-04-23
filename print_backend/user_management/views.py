@@ -7,8 +7,8 @@ from .authenticate import CustomAuthentication
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
-from .serializers import CustomObtainPairTokenSerializer
-
+from .serializers import CustomObtainPairTokenSerializer , UserPublicSerializer
+from .models import *
 #the logic for authentication 
     # we have a custom user Model
         # we need to authenticate the user using jwt auth (access and refresh token)

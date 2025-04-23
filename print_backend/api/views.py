@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from .utils.drive_download import download_file_from_google_drive
 from django.db.models import Count
 from django.utils.timezone import now, timedelta
+from user_management.models import Company
 
 
 
@@ -208,3 +209,38 @@ class OrdersStatisticsView(APIView):
             "recent_order" : recent_orders_serializer.data,
             "total_clients" : total_clients
         })
+        
+        
+class CompaniesListView(APIView):
+    authentication_classes = [CustomAuthentication]
+
+    def get(self , request):
+        companie_objects = Company.objects.all()
+        companies_serializer = CompanySerializer(companie_objects , many=True)
+        
+        return Response({"response" : companies_serializer.data} , status=status.HTTP_200_OK)
+    
+    
+    
+    def post(self , request):
+        data = request.data 
+        
+        company_serializer = CompanySerializer(data = data)
+        
+        if company_serializer.is_valid():
+            company_serializer.save()
+            return Response({'response' : "Company Created"} , status=status.HTTP_200_OK)
+        else : 
+            return Response({'response' : company_serializer.errors} , status=status.HTTP_400_BAD_REQUEST)
+        
+        
+
+        
+class UsersListView(APIView):
+    authentication_classes = [CustomAuthentication]
+    def get(self , request):
+        users = CustomUser.objects.all()
+        
+        users_serializer = UserPublicSerializer(users , many = True)
+        
+        return Response({'users' : users_serializer.data} , status=status.HTTP_200_OK)

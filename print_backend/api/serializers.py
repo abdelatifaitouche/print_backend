@@ -2,9 +2,14 @@ from rest_framework.serializers import ModelSerializer
 from .models import *
 from rest_framework import serializers
 from user_management.models import Company , CustomUser
-
+class CompanySerializer(ModelSerializer):
+    class Meta:
+        model = Company
+        fields = '__all__'  # or exclude specific fields if needed
 
 class UserPublicSerializer(ModelSerializer):
+    company = CompanySerializer(read_only=True)
+
     class Meta:
         model = CustomUser
         exclude = ['password', 'last_login', 'is_superuser', 'user_permissions', 'groups']
@@ -15,10 +20,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = ['id', 'order', 'item_name', 'google_drive_file_id' , 'status']
         
-class CompanySerializer(ModelSerializer):
-    class Meta:
-        model = Company
-        fields = '__all__'  # or exclude specific fields if needed
+
 
 
 
