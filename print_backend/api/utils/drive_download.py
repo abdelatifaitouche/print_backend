@@ -24,7 +24,6 @@ def download_file_from_google_drive(file_id):
 
     # Authenticate using the service account
         creds = service_account.Credentials.from_service_account_info(credentials_info, scopes=SCOPES)
-        service_account.Credentials.from_service_account_info()
         drive_service = build("drive", "v3", credentials=creds)
         # Get the file's metadata to retrieve the file name
         request = drive_service.files().get_media(fileId=file_id)
