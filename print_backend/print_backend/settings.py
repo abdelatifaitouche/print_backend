@@ -110,28 +110,29 @@ WSGI_APPLICATION = 'print_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
-
-
 """
+
+#postgresql://printdb_user:EjjW53EVZYwspVQZjF0092uKT4m9FbUb@dpg-d04091adbo4c73c98mcg-a.oregon-postgres.render.com/printdb
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'printdb',
         'USER': 'printdb_user',
         'PASSWORD': 'EjjW53EVZYwspVQZjF0092uKT4m9FbUb',
-        'HOST': 'dpg-d04091adbo4c73c98mcg-a',
+        'HOST': 'dpg-d04091adbo4c73c98mcg-a.oregon-postgres.render.com',
         'PORT': '5432',
     }
 }
-"""
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

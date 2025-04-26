@@ -125,7 +125,7 @@ class GetUserRole(APIView):
 
 
 class UserRegisterView(APIView):
-    authentication_classes = [CustomAuthentication]
+    #authentication_classes = [CustomAuthentication]
     def post(self , request , *args , **kwargs):
         
         data = request.data
