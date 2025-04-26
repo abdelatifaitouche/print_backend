@@ -139,4 +139,4 @@ class UserRegisterView(APIView):
             }, status=status.HTTP_201_CREATED)
         return Response(user_register_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        
+        #adding some random comments

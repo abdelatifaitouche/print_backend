@@ -290,6 +290,9 @@ class UsersListView(APIView):
 
 
 
-class RegisterView(generics.CreateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = RegisterSerializer
+class StatusViewList(APIView):
+    def get(self , request) :
+        return
+    
+    def post(self , request):
+        return
