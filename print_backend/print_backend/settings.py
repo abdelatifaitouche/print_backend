@@ -201,7 +201,7 @@ CORS_ALLOW_ALL_ORIGINS = True  # or use CORS_ALLOWED_ORIGINS
 CORS_EXPOSE_HEADERS = ["Content-Disposition"]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://print-frontend-juee.vercel.app/",
+    "https://print-frontend-juee.vercel.app",
 ]
 
 
