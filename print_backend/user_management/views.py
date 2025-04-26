@@ -7,7 +7,7 @@ from .authenticate import CustomAuthentication
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
-from .serializers import CustomObtainPairTokenSerializer , UserPublicSerializer
+from .serializers import CustomObtainPairTokenSerializer , UserPublicSerializer , UserRegisterSerializer
 from .models import *
 #the logic for authentication 
     # we have a custom user Model
@@ -120,5 +120,23 @@ class GetUserRole(APIView):
             return Response({'user_role' : user_role} , status=status.HTTP_200_OK)
         except Exception as e :
             return Response({"details" : "Invalid or expired token"} , status=status.HTTP_400_BAD_REQUEST) 
+        
+        
+
+
+class UserRegisterView(APIView):
+    authentication_classes = [CustomAuthentication]
+    def post(self , request , *args , **kwargs):
+        
+        data = request.data
+        user_register_serializer = UserRegisterSerializer(data= data)
+        
+        if user_register_serializer.is_valid():
+            user = user_register_serializer.save()
+            return Response({
+                "user": "Created",
+                "message": "User created successfully",
+            }, status=status.HTTP_201_CREATED)
+        return Response(user_register_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         

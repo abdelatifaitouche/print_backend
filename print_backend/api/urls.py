@@ -14,7 +14,9 @@ urlpatterns = [
     path('companies/companiesList/' , CompaniesListView.as_view() , name="Company listing"),
     
     
-    path('users/usersList/' , UsersListView.as_view() , name="users")
+    path('users/usersList/' , UsersListView.as_view() , name="users"),
+    path('companies/companyDetails/<str:pk>' , CompanyDetailView.as_view() , name='company details'),
+    #path('users/createuser/' , RegisterView.as_view() , name="create user")
 
 
 ]

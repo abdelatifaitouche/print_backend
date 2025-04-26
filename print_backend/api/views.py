@@ -14,6 +14,7 @@ from .utils.drive_download import download_file_from_google_drive
 from django.db.models import Count
 from django.utils.timezone import now, timedelta
 from user_management.models import Company
+from rest_framework import generics 
 
 
 
@@ -233,7 +234,49 @@ class CompaniesListView(APIView):
         else : 
             return Response({'response' : company_serializer.errors} , status=status.HTTP_400_BAD_REQUEST)
         
-        
+
+
+
+class CompanyDetailView(APIView):
+    """
+    Handles retrieval, partial update, and deletion of a single company.
+    """
+    authentication_classes = [CustomAuthentication]
+
+    def get_object(self, pk):
+        return get_object_or_404(Company, pk=pk)
+
+    def get(self, request, pk):
+        """
+        Retrieve company details by ID.
+        """
+        company = self.get_object(pk)
+        serializer = CompanySerializer(company)
+        return Response({"response": serializer.data}, status=status.HTTP_200_OK)
+
+    def patch(self, request, pk):
+        """
+        Partially update a company's information.
+        """
+        company = self.get_object(pk)
+        serializer = CompanySerializer(company, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"response": "Company updated"}, status=status.HTTP_200_OK)
+
+        return Response({"response": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        """
+        Delete a company by ID.
+        """
+        company = self.get_object(pk)
+        company.delete()
+        return Response({"response": "Company deleted"}, status=status.HTTP_200_OK)
+
+
+    
 
         
 class UsersListView(APIView):
@@ -244,3 +287,9 @@ class UsersListView(APIView):
         users_serializer = UserPublicSerializer(users , many = True)
         
         return Response({'users' : users_serializer.data} , status=status.HTTP_200_OK)
+
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = RegisterSerializer
