@@ -204,6 +204,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://print-frontend-juee.vercel.app",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://print-frontend-juee.vercel.app",
+]
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
 
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
 
 #THIS IS HJSUT COMMENTS
