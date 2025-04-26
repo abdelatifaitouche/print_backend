@@ -200,17 +200,20 @@ CORS_ALLOW_HEADERS = (
 #CORS_ALLOW_ALL_ORIGINS = True  # or use CORS_ALLOWED_ORIGINS
 CORS_EXPOSE_HEADERS = ["Content-Disposition"]
 
+
 CORS_ALLOWED_ORIGINS = [
     "https://print-frontend-juee.vercel.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://print-frontend-juee.vercel.app",
+    "https://print-backend-z4p1.onrender.com",  # ✅ ADD THIS!
 ]
-SESSION_COOKIE_SAMESITE = 'None'
+
+SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
 
-CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
 
 #THIS IS HJSUT COMMENTS
