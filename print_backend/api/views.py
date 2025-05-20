@@ -16,13 +16,16 @@ from django.utils.timezone import now, timedelta
 from user_management.models import Company
 from rest_framework import generics 
 
+from rest_framework.exceptions import NotFound, ValidationError
+
+
 
 
 
 class OrderListView(APIView):
     authentication_classes = [CustomAuthentication]
     def get(self , request):
-        orders_listing = Order.objects.all()
+        orders_listing = Order.objects.all().order_by('-created_at')
         orders_serializer = OrderSerializer(orders_listing , many=True)
         return Response({"Orders" : orders_serializer.data} , status = status.HTTP_200_OK)
     
@@ -42,7 +45,7 @@ class OrderListView(APIView):
         if order_serializer.is_valid():
         # Save the order object
             order = order_serializer.save()
-
+            print("requested data : " , data)
             items_data = []
             for i in range(len(data.getlist("items[0][item_name]"))):
                 item_data = {
@@ -62,7 +65,7 @@ class OrderListView(APIView):
                     item_data["google_drive_file_id"] = file_id
 
                 items_data.append(item_data)
-
+            print("check if the items data contains everything" , items_data)
         # Save each item related to the order
             for item_data in items_data:
                 order_item_serializer = OrderItemSerializer(data=item_data)
@@ -289,6 +292,125 @@ class UsersListView(APIView):
         return Response({'users' : users_serializer.data} , status=status.HTTP_200_OK)
 
 
+
+class UserDetailView(APIView):
+    
+    def get(self, request, pk):
+        try:
+            user_model = get_object_or_404(CustomUser, pk=pk)
+            user_serializer = UserPublicSerializer(user_model)
+            return Response({'response': user_serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': f'An unexpected error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def patch(self, request, pk):
+        try:
+            user = get_object_or_404(CustomUser, pk=pk)
+            data = request.data
+            user_serializer = UserUpdateSerializer(instance=user, data=data, partial=True)
+            
+            if user_serializer.is_valid():
+                user_serializer.save()
+                return Response(user_serializer.data, status=status.HTTP_200_OK)
+            
+            raise ValidationError(user_serializer.errors)
+
+        except ValidationError as ve:
+            return Response({"errors": ve.detail}, status=status.HTTP_400_BAD_REQUEST)
+        except NotFound:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f'An unexpected error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, pk):
+        try:
+            user = get_object_or_404(CustomUser, pk=pk)
+            user.delete()
+            return Response({'response': "User deleted"}, status=status.HTTP_200_OK)
+        except NotFound:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': f'An unexpected error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class BlockUserView(APIView):
+    authentication_classes = [CustomAuthentication]
+    def post(self, request, pk):
+        # Only admins can block users
+        if request.user.role != 'admin':
+            return Response({"detail": "Only admins can block users."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        user = get_object_or_404(CustomUser, pk=pk)
+
+        if not user.is_active:
+            return Response({"detail": "User is already blocked."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        user.is_active = False
+        user.save()
+
+        return Response({"detail": f"User '{user.username}' has been blocked."},
+                        status=status.HTTP_200_OK)
+
+
+
+class UnblockUserView(APIView):
+    authentication_classes = [CustomAuthentication]
+    def post(self, request, pk):
+        if request.user.role != 'admin':
+            return Response({"detail": "Only admins can unblock users."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        user = get_object_or_404(CustomUser, pk=pk)
+
+        if user.is_active:
+            return Response({"detail": "User is already active."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        user.is_active = True
+        user.save()
+
+        return Response({"detail": f"User '{user.username}' has been unblocked."},
+                        status=status.HTTP_200_OK)
+
+class ChangePasswordView(APIView):
+    authentication_classes = [CustomAuthentication]
+    def post(self, request, pk=None):
+        user = request.user
+
+        # Admin wants to change another user's password
+        if pk:
+            if not user.is_staff:
+                return Response({'error': 'Only admins can change other users\' passwords.'},
+                                status=status.HTTP_403_FORBIDDEN)
+            user = get_object_or_404(CustomUser, pk=pk)
+
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+        new_password2 = request.data.get('new_password2')
+
+        if not new_password or not new_password2:
+            return Response({'error': 'Both new password fields are required.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if new_password != new_password2:
+            return Response({'error': 'New passwords do not match.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Regular users must provide current password
+        if not request.user.is_staff or (pk and request.user.pk == int(pk)):
+            if not current_password:
+                return Response({'error': 'Current password is required.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if not user.check_password(current_password):
+                return Response({'error': 'Current password is incorrect.'},
+                                status=status.HTTP_403_FORBIDDEN)
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response({'response': 'Password changed successfully.'},
+                        status=status.HTTP_200_OK)
 
 class StatusViewList(APIView):
     def get(self , request) :

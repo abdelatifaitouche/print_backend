@@ -203,11 +203,13 @@ CORS_EXPOSE_HEADERS = ["Content-Disposition"]
 
 CORS_ALLOWED_ORIGINS = [
     "https://print-frontend-juee.vercel.app",
+    "http://localhost:5173"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://print-frontend-juee.vercel.app",
-    "https://print-backend-z4p1.onrender.com",  # ✅ ADD THIS!
+    "https://print-backend-z4p1.onrender.com",
+    "http://localhost:5173/"# ✅ ADD THIS!
 ]
 
 SESSION_COOKIE_SAMESITE = "None"

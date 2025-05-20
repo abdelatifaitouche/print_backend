@@ -89,4 +89,23 @@ class RegisterSerializer(ModelSerializer):
         #print(response)
 
         return user
+    
+    
+    
+    
+    
+class UserUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone_number', 'role']
+        extra_kwargs = {
+            'email': {'required': True},
+            'username': {'required': True}
+        }
+        
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance , attr , value)
+        instance.save()
+        return instance
         

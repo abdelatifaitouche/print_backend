@@ -15,6 +15,19 @@ urlpatterns = [
     
     
     path('users/usersList/' , UsersListView.as_view() , name="users"),
+    path('users/userDetails/<str:pk>' , UserDetailView.as_view() , name="user Details"),
+    path("users/blockuser/<str:pk>" , BlockUserView.as_view() , name="block user"),
+    path("users/unblockUser/<str:pk>" , UnblockUserView.as_view() , name="unblock user"),
+    path('users/change-password/', ChangePasswordView.as_view(), name='change_own_password'),
+    path('users/change-password/<int:pk>/', ChangePasswordView.as_view(), name='admin_change_password'),
+    
+    
+    
+    
+    
+    
+    
+    
     path('companies/companyDetails/<str:pk>' , CompanyDetailView.as_view() , name='company details'),
     path('users/status/' , StatusViewList.as_view() , name="create user")
 
