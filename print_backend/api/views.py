@@ -4,19 +4,26 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 # Create your views here.
-from .utils.drive_upload import upload_file_to_drive
 from .models import *
 from .serializers import  *
 from rest_framework.permissions import AllowAny
 from user_management.authenticate import CustomAuthentication
 from django.http import HttpResponse
-from .utils.drive_download import download_file_from_google_drive
 from django.db.models import Count
 from django.utils.timezone import now, timedelta
 from user_management.models import Company
 from rest_framework import generics 
-
 from rest_framework.exceptions import NotFound, ValidationError
+from api.utils.invoice_generator import create_invoice
+from api.utils.factories import GoogleDriveClientFactory
+
+class TestingView(APIView):
+    def get(self , request):
+        current_user = request.user
+        serilaizer = UserPublicSerializer(current_user)
+        return Response({"current user : " : serilaizer.data})
+
+
 
 
 
@@ -25,23 +32,27 @@ from rest_framework.exceptions import NotFound, ValidationError
 class OrderListView(APIView):
     authentication_classes = [CustomAuthentication]
     def get(self , request):
-        orders_listing = Order.objects.all().order_by('-created_at')
-        orders_serializer = OrderSerializer(orders_listing , many=True)
-        return Response({"Orders" : orders_serializer.data} , status = status.HTTP_200_OK)
+        
+        if request.user.role == "admin" or request.user.role == "operator" :
+            orders_listing = Order.objects.all().order_by('-created_at')
+            orders_serializer = OrderSerializer(orders_listing , many=True)
+            return Response({"Orders" : orders_serializer.data} , status = status.HTTP_200_OK)
+        else : 
+            orders_listing = Order.objects.filter(company_id = request.user.company).order_by('-created_at')
+            orders_serializer = OrderSerializer(orders_listing , many = True)
+            return Response({"Orders" : orders_serializer.data} , status = status.HTTP_200_OK)
     
 
 
     def post(self, request):
         data = request.data
-        files = request.FILES  # Files are in request.FILES
-
-    # Add user and company to the order data
+        files = request.FILES  # Files are in request.FILES   
+        # Add user and company to the order data
         data['user_id'] = request.user.id
-        data['company'] = request.user.company.id
-
-    # Pass context with request to the serializer
+        #data['company'] = request.user.company.id
+        # Pass context with request to the serializer
         order_serializer = OrderSerializer(data=data, context={'request': request})
-
+        client = GoogleDriveClientFactory.from_env()
         if order_serializer.is_valid():
         # Save the order object
             order = order_serializer.save()
@@ -59,7 +70,7 @@ class OrderListView(APIView):
                     item_file = files[file_field_name]
                 
                 # Upload file to Google Drive and get the file ID
-                    file_id = upload_file_to_drive(item_file)  # Assuming this function handles Google Drive upload
+                    file_id = client.upload_file_to_drive(item_file , "SOLIC")  # Assuming this function handles Google Drive upload
 
                 # Save the Google Drive file ID in the item data
                     item_data["google_drive_file_id"] = file_id
@@ -80,7 +91,8 @@ class DownloadFileView(APIView):
     def get(self, request, file_id, *args, **kwargs):
         try:
             # Call the download function with file_id directly
-            file_name, file_handle = download_file_from_google_drive(file_id)
+            client = GoogleDriveClientFactory.from_env()
+            file_name, file_handle = client.download_file_from_google_drive(file_id)
 
             # Prepare response with file as attachment
             response = HttpResponse(file_handle, content_type="application/octet-stream")
@@ -99,6 +111,7 @@ class OrderDetailView(APIView):
         order_object = get_object_or_404(Order , pk=pk)
         
         order_serializer = OrderSerializer(order_object)
+        print(order_serializer.data)
         return Response({'order' : order_serializer.data} , status=status.HTTP_200_OK)
     
     def put():
@@ -159,7 +172,7 @@ class OrderItemDetailView(APIView):
     def get(self , request , pk):
         orderItem = get_object_or_404(OrderItem , pk = pk)
         order_item_serializer = OrderItemSerializer(orderItem , many=False)
-        
+        print(order_item_serializer.data)
         return Response({'orderItem' : order_item_serializer.data} , status=status.HTTP_200_OK)
     
     
@@ -278,7 +291,16 @@ class CompanyDetailView(APIView):
         company.delete()
         return Response({"response": "Company deleted"}, status=status.HTTP_200_OK)
 
-
+class CompanyUserListView(APIView):
+    authentication_classes = [CustomAuthentication]
+    
+    def get(self , request , pk):
+        
+        company_users = CustomUser.objects.filter(company_id = pk)
+        
+        company_user_serializer = UserPublicSerializer(company_users , many=True)
+        
+        return Response({'reponse' : company_user_serializer.data} , status=status.HTTP_200_OK)
     
 
         
@@ -418,3 +440,21 @@ class StatusViewList(APIView):
     
     def post(self , request):
         return
+    
+    
+class GenerateInvoice(APIView):
+    
+    def post(self , request):
+        
+        invoice_items = [
+        {"description": "Website Design", "quantity": 1, "unit_price": 2000.00},
+        {"description": "Hosting (1 year)", "quantity": 1, "unit_price": 300.00},
+        {"description": "SEO Services", "quantity": 5, "unit_price": 150.00},
+        ]
+
+
+        invoice = create_invoice(invoice_items)
+        invoice.seek(0)
+        response = HttpResponse(invoice, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="invoice_testing.pdf"'
+        return response

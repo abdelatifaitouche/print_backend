@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'user_management',
-    "api.apps.ApiConfig"
+    "api.apps.ApiConfig",
+    "analytics"
 ]
 
 MIDDLEWARE = [
@@ -118,10 +119,20 @@ DATABASES = {
     }
 }
 """
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydb',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',  # or '127.0.0.1'
+        'PORT': '5432',
+    }
+}
 
 #postgresql://printdb_user:EjjW53EVZYwspVQZjF0092uKT4m9FbUb@dpg-d04091adbo4c73c98mcg-a.oregon-postgres.render.com/printdb
 
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -132,7 +143,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

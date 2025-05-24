@@ -2,6 +2,10 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
+    
+    path("testingView/" , TestingView.as_view() , name="testing") , 
+    
+    
     path('orders/ordersList/' , OrderListView.as_view() , name="Order Listing"),
     path('orders/orderDetails/<str:pk>' , OrderDetailView.as_view() , name='Order Details'),
     path('orders/orderItems/' , OrderItemListView.as_view()),
@@ -11,7 +15,6 @@ urlpatterns = [
     path('orders/orderItem/orderItemDetails/<str:pk>' , OrderItemDetailView.as_view() , name="order Item details"),
     
     
-    path('companies/companiesList/' , CompaniesListView.as_view() , name="Company listing"),
     
     
     path('users/usersList/' , UsersListView.as_view() , name="users"),
@@ -25,10 +28,18 @@ urlpatterns = [
     
     
     
-    
-    
+    path("orders/generateInvoice/" , GenerateInvoice.as_view() , name="invoice gen"),
     
     path('companies/companyDetails/<str:pk>' , CompanyDetailView.as_view() , name='company details'),
+    path('companies/companyDetails/<str:pk>/users' , CompanyUserListView.as_view() , name='company details'),#redondent work, you can simply filter them on the list view 
+    #a better thing to do in the company page details, is listigin all theirs orders 
+
+    path('companies/companiesList/' , CompaniesListView.as_view() , name="Company listing"),
+
+    
+    
+    
+    
     path('users/status/' , StatusViewList.as_view() , name="create user")
 
 

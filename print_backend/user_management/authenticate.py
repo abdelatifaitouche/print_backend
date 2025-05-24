@@ -2,6 +2,7 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from django.conf import settings
+from .models import CustomUser
 
 
 class CustomAuthentication(JWTAuthentication):
@@ -20,3 +21,5 @@ class CustomAuthentication(JWTAuthentication):
         validated_token = self.get_validated_token(raw_token)
         
         return self.get_user(validated_token), validated_token
+    
+    
