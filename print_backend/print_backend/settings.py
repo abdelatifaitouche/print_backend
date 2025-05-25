@@ -130,20 +130,7 @@ DATABASES = {
     }
 }
 
-#postgresql://printdb_user:EjjW53EVZYwspVQZjF0092uKT4m9FbUb@dpg-d04091adbo4c73c98mcg-a.oregon-postgres.render.com/printdb
 
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'printdb',
-        'USER': 'printdb_user',
-        'PASSWORD': 'EjjW53EVZYwspVQZjF0092uKT4m9FbUb',
-        'HOST': 'dpg-d04091adbo4c73c98mcg-a.oregon-postgres.render.com',
-        'PORT': '5432',
-    }
-}
-"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -223,10 +210,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://20.102.97.162:8000"
 ]
 
-SESSION_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SECURE = False
 
-CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = False
-
+SESSION_COOKIE_SECURE = False
 #THIS IS HJSUT COMMENTS
