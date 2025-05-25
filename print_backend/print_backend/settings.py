@@ -219,9 +219,8 @@ CORS_ALLOWED_ORIGINS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://print-frontend-juee.vercel.app",
-    "https://print-backend-z4p1.onrender.com",
     "http://localhost:5173/"# ✅ ADD THIS!,
-    "http://20.102.97.162"
+    "http://20.102.97.162:8000"
 ]
 
 SESSION_COOKIE_SAMESITE = "None"
