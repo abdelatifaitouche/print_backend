@@ -18,13 +18,17 @@ from api.utils.invoice_generator import create_invoice
 from api.utils.factories import GoogleDriveClientFactory
 
 class TestingView(APIView):
+    authentication_classes =[CustomAuthentication]
     def get(self , request):
-        current_user = request.user
-        serilaizer = UserPublicSerializer(current_user)
-        return Response({"current user : " : serilaizer.data})
+        print(request.data)
+        return Response({"current user : " : "testing"})
 
 
-
+    def post(self , request):
+        data = request.data
+        data["user"] = request.user.id
+        data["company"] = request.user.company.id
+        return Response({'data' : data})
 
 
 
@@ -45,35 +49,47 @@ class OrderListView(APIView):
 
 
     def post(self, request):
+        """
+        REFACTOR THIS FUNCTION  : 
+            - Change what the payload is to : {order , user , company , items : [item_data , item_data]}
+            - item_data = {item_name , file , google_drive_id , order }
+            - separate this function into two : extract the items from the request , create the items objects
+            - once this done and tested, think about offloading this into celery and redis (async work)
+        """
         data = request.data
-        files = request.FILES  # Files are in request.FILES   
         # Add user and company to the order data
         data['user_id'] = request.user.id
-        #data['company'] = request.user.company.id
+        data['company'] = request.user.company.id
         # Pass context with request to the serializer
+        
         order_serializer = OrderSerializer(data=data, context={'request': request})
         client = GoogleDriveClientFactory.from_env()
-        if order_serializer.is_valid():
-        # Save the order object
-            order = order_serializer.save()
-            print("requested data : " , data)
-            items_data = []
-            for i in range(len(data.getlist("items[0][item_name]"))):
-                item_data = {
-                    "item_name": data.getlist(f"items[{i}][item_name]")[0],
+        if not order_serializer.is_valid():
+        # Save the order object            
+            return Response({"error": order_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+        order = order_serializer.save()
+        
+        
+        files = request.FILES  # Files are in request.FILES   
+
+        items_data = []
+        for item in range(len(data['items'])):
+            item_data = {
+                    "item_name": data['items'][item]['item_name'],
                     "order": order.id,  # Assign the order to the item
                 }
 
             # Check if a file is present in the current item
-                file_field_name = f"items[{i}][file]"
-                if file_field_name in files:
-                    item_file = files[file_field_name]
+            file_field_name = f"items[{i}][file]"
+            if file_field_name in files:
+                item_file = files[file_field_name]
                 
                 # Upload file to Google Drive and get the file ID
-                    file_id = client.upload_file_to_drive(item_file , "SOLIC")  # Assuming this function handles Google Drive upload
+                file_id = client.upload_file_to_drive(item_file , "SOLIC")  # Assuming this function handles Google Drive upload
 
                 # Save the Google Drive file ID in the item data
-                    item_data["google_drive_file_id"] = file_id
+                item_data["google_drive_file_id"] = file_id
 
                 items_data.append(item_data)
             print("check if the items data contains everything" , items_data)
@@ -84,8 +100,6 @@ class OrderListView(APIView):
                     order_item_serializer.save()
 
             return Response({"response": "Order Created"}, status=status.HTTP_201_CREATED)
-
-        return Response({"error": order_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
 class DownloadFileView(APIView):
     def get(self, request, file_id, *args, **kwargs):
