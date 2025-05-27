@@ -36,7 +36,7 @@ class TestingView(APIView):
 class OrderListView(APIView):
     authentication_classes = [CustomAuthentication]
     def get(self , request):
-        
+        print("request user" , request.user)
         if request.user.role == "admin" or request.user.role == "operator" :
             orders_listing = Order.objects.all().order_by('-created_at')
             orders_serializer = OrderSerializer(orders_listing , many=True)

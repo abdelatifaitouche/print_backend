@@ -207,10 +207,13 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://print-frontend-juee.vercel.app",
     "http://localhost:5173" , # ✅ ADD THIS!
-    "http://20.102.97.162:8000"
+    "http://20.102.97.162:8000",
+    "http://127.0.0.1:8000"
 ]
 
 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None"
 #THIS IS HJSUT COMMENTS
