@@ -205,10 +205,11 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "http://195.35.3.189:8000",
     "https://print-frontend-juee.vercel.app",
     "http://localhost:5173" , # ✅ ADD THIS!
     "http://127.0.0.1:8000",
-    "http://195.35.3.189:8000/"
+    
 ]
 
 
