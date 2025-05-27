@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-oc2w_f7mffwlaqpn5@8u7$ln_^r7nh1x2535dp4sv9ad9wyw_s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*", "20.102.97.162", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*", "195.35.3.189", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -207,8 +207,8 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://print-frontend-juee.vercel.app",
     "http://localhost:5173" , # ✅ ADD THIS!
-    "http://20.102.97.162:8000",
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000",
+    "http://195.35.3.189:8000/"
 ]
 
 
